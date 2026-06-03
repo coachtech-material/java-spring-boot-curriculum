@@ -1,0 +1,109 @@
+/* Java テーマカラー（Java ロゴのブルー #5382A1 / オレンジ #F89820） */
+:root {
+  --md-primary-fg-color: #5382A1;
+  --md-primary-fg-color--light: #6E9DBA;
+  --md-primary-fg-color--dark: #3E6A88;
+  --md-accent-fg-color: #E76F00;
+  --md-accent-fg-color--transparent: rgba(231, 111, 0, 0.1);
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #5382A1;
+  --md-primary-fg-color--light: #6E9DBA;
+  --md-primary-fg-color--dark: #3E6A88;
+  --md-accent-fg-color: #F89820;
+  --md-accent-fg-color--transparent: rgba(248, 152, 32, 0.1);
+}
+
+/* ホームページのヒーローセクション */
+.hero {
+  text-align: center;
+  padding: 2rem 0 1rem;
+}
+
+.hero p:first-of-type {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--md-primary-fg-color);
+}
+
+/* フッターの "Made with Material for MkDocs" を非表示 */
+.md-copyright {
+  display: none;
+}
+
+/* 見出しの視認性を改善 */
+.md-typeset h1 {
+  font-weight: 700;
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset h2 {
+  font-weight: 600;
+  color: var(--md-default-fg-color);
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  padding-bottom: 0.4rem;
+}
+
+.md-typeset h3 {
+  font-weight: 600;
+  color: var(--md-default-fg-color);
+}
+
+/* ダークモード: テキストの視認性を改善 */
+[data-md-color-scheme="slate"] .md-typeset {
+  color: rgba(255, 255, 255, 0.87);
+}
+
+[data-md-color-scheme="slate"] .md-typeset h1,
+[data-md-color-scheme="slate"] .md-typeset h2,
+[data-md-color-scheme="slate"] .md-typeset h3 {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+[data-md-color-scheme="slate"] .md-typeset h2 {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-md-color-scheme="slate"] .md-typeset code {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ヘッダーロゴ: SVG を非表示にしつつリンクエリアをタイトル全体に広げる */
+.md-header__button.md-logo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  z-index: 1;
+  opacity: 0;
+}
+
+.md-header__button.md-logo svg {
+  display: none;
+}
+
+.md-header__inner {
+  position: relative;
+}
+
+.md-header__ellipsis {
+  cursor: pointer;
+}
+
+/* フッター前/次ナビの視認性を改善 */
+.md-footer__link {
+  padding: 1rem 1.5rem;
+  border-radius: 0.4rem;
+  transition: background-color 0.2s;
+}
+
+.md-footer__link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.md-footer__title {
+  font-size: 0.9rem;
+  font-weight: 600;
+}

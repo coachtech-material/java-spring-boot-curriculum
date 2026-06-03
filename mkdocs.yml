@@ -1,0 +1,139 @@
+site_name: COACHTECH × Java / Spring Boot ガイド
+site_description: Laravel 経験者のための Java / Spring Boot バックエンド開発教材
+site_url: https://coachtech-material.github.io/java-spring-boot-curriculum/
+
+docs_dir: docs
+
+theme:
+  name: material
+  language: ja
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: ダークモードに切り替え
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: ライトモードに切り替え
+  font:
+    text: Noto Sans JP
+    code: JetBrains Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+  icon: {}
+
+extra:
+  generator: false
+
+extra_css:
+  - stylesheets/custom.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - トップ: index.md
+  - Part 1 Java 言語の基礎:
+    - Chapter 1 オリエンテーションと Java という言語:
+      - 1-1-1 なぜ Java / Spring Boot を学ぶのか: part-01/chapter-01/1-1-1.md
+      - 1-1-2 Java という言語の正体: part-01/chapter-01/1-1-2.md
+      - 1-1-3 Java プロジェクトの形: part-01/chapter-01/1-1-3.md
+    - Chapter 2 基本文法:
+      - 1-2-1 変数と型: part-01/chapter-02/1-2-1.md
+      - 1-2-2 演算子と制御構文: part-01/chapter-02/1-2-2.md
+      - 1-2-3 メソッドと配列・文字列: part-01/chapter-02/1-2-3.md
+    - Chapter 3 コレクションと例外処理:
+      - 1-3-1 コレクション: part-01/chapter-03/1-3-1.md
+      - 1-3-2 例外処理: part-01/chapter-03/1-3-2.md
+  - Part 2 オブジェクト指向と現代的な Java:
+    - Chapter 1 クラスとカプセル化:
+      - 2-1-1 クラスとインスタンス: part-02/chapter-01/2-1-1.md
+      - 2-1-2 カプセル化とアクセス修飾子: part-02/chapter-01/2-1-2.md
+    - Chapter 2 継承と抽象クラス:
+      - 2-2-1 継承: part-02/chapter-02/2-2-1.md
+      - 2-2-2 抽象クラス: part-02/chapter-02/2-2-2.md
+    - Chapter 3 インターフェースとポリモーフィズム:
+      - 2-3-1 インターフェース: part-02/chapter-03/2-3-1.md
+      - 2-3-2 ポリモーフィズム: part-02/chapter-03/2-3-2.md
+    - Chapter 4 現代的な Java:
+      - 2-4-1 record と enum: part-02/chapter-04/2-4-1.md
+      - 2-4-2 ジェネリクスの定義: part-02/chapter-04/2-4-2.md
+      - 2-4-3 Optional とラムダ・Stream 入門: part-02/chapter-04/2-4-3.md
+  - Part 3 Spring Boot で REST API を作る:
+    - Chapter 1 Spring Boot 入門:
+      - 3-1-1 Spring と Spring Boot の世界: part-03/chapter-01/3-1-1.md
+      - 3-1-2 Maven とプロジェクトの構成: part-03/chapter-01/3-1-2.md
+      - 3-1-3 アプリケーションの起動と設定: part-03/chapter-01/3-1-3.md
+    - Chapter 2 DI コンテナとレイヤードアーキテクチャ:
+      - 3-2-1 IoC と DI コンテナ: part-03/chapter-02/3-2-1.md
+      - 3-2-2 レイヤードアーキテクチャ: part-03/chapter-02/3-2-2.md
+    - Chapter 3 Web 層と REST API の実装:
+      - 3-3-1 リクエストを受けて返す: part-03/chapter-03/3-3-1.md
+      - 3-3-2 DTO と JSON: part-03/chapter-03/3-3-2.md
+      - 3-3-3 バリデーションと例外ハンドリング: part-03/chapter-03/3-3-3.md
+    - Chapter 4 データアクセス層と Spring Data JPA:
+      - 3-4-1 エンティティとマッピング: part-03/chapter-04/3-4-1.md
+      - 3-4-2 リレーションとリポジトリ: part-03/chapter-04/3-4-2.md
+      - 3-4-3 トランザクションと N+1: part-03/chapter-04/3-4-3.md
+    - Chapter 5 サーバーサイドレンダリング入門（Spring MVC + Thymeleaf）:
+      - 3-5-1 画面を返す Spring MVC: part-03/chapter-05/3-5-1.md
+      - 3-5-2 Thymeleaf テンプレートの基本: part-03/chapter-05/3-5-2.md
+  - Part 4 実務に耐える品質をつくる:
+    - Chapter 1 認証と認可:
+      - 4-1-1 Spring Security の仕組み: part-04/chapter-01/4-1-1.md
+      - 4-1-2 認証の実装と JWT 入門: part-04/chapter-01/4-1-2.md
+    - Chapter 2 テスト:
+      - 4-2-1 単体テスト: part-04/chapter-02/4-2-1.md
+      - 4-2-2 Spring のテスト: part-04/chapter-02/4-2-2.md
+    - Chapter 3 運用の土台:
+      - 4-3-1 例外設計とログ: part-04/chapter-03/4-3-1.md
+      - 4-3-2 設定の外部化とパッケージング: part-04/chapter-03/4-3-2.md
+  - Part 5 総合ハンズオン（タスク管理 REST API）:
+    - Chapter 1 設計とプロジェクト初期化:
+      - 5-1-1 要件と API の設計: part-05/chapter-01/5-1-1.md
+      - 5-1-2 環境構築とプロジェクト作成: part-05/chapter-01/5-1-2.md
+    - Chapter 2 実装:
+      - 5-2-1 ドメインとデータアクセス: part-05/chapter-02/5-2-1.md
+      - 5-2-2 ビジネスロジックと API: part-05/chapter-02/5-2-2.md
+      - 5-2-3 Spring Security 設定とログイン認証: part-05/chapter-02/5-2-3.md
+      - 5-2-4 JWT 発行・検証と認可: part-05/chapter-02/5-2-4.md
+      - 5-2-5 タスク一覧画面（Thymeleaf）: part-05/chapter-02/5-2-5.md
+    - Chapter 3 テストと仕上げ:
+      - 5-3-1 テストを書く: part-05/chapter-03/5-3-1.md
+      - 5-3-2 動作確認と振り返り: part-05/chapter-03/5-3-2.md
