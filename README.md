@@ -1,198 +1,207 @@
-# 教材執筆フレームワーク
+# Laravel 経験者のための Java / Spring Boot バックエンド開発
 
-Claude Code のスキルを使って、技術教材の設計から執筆・レビュー・メンテナンスまでを行うフレームワークです。
+[![Deploy](https://github.com/coachtech-material/java-spring-boot-curriculum/actions/workflows/deploy.yml/badge.svg)](https://github.com/coachtech-material/java-spring-boot-curriculum/actions/workflows/deploy.yml)
+[![Java](https://img.shields.io/badge/Java-21_LTS-007396?logo=openjdk&logoColor=white)](https://adoptium.net/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.x-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 
-「誰に、なぜ、何を教えるか」を対話で定義し、その哲学に基づいて構造を MECE に分解し、一貫した品質で教材を書き上げます。
+Laravel（PHP）の経験を足がかりに、Java と Spring Boot で **企業の現場に通用する REST API バックエンド** を設計・実装・テストできるようになるための教材です。
 
-## クイックスタート
-
-```bash
-# 1. クローン
-git clone https://github.com/yotaro0616/curriculum-writer.git my-curriculum
-cd my-curriculum
-
-# 2. Claude Code で対話的にセットアップ
-/setup
-
-# 3. 執筆
-/write Chapter 1
-```
-
-`/setup` を実行すると、対話を通じて CLAUDE.md（哲学）・OUTLINE.md（構造）・writing.md（執筆ルール）が生成されます。あとは `/write` で書き、`/review` でチェックするだけです。
+> 📖 **公開サイトで読む**: **<https://coachtech-material.github.io/java-spring-boot-curriculum/>**
+>
+> この教材は MkDocs で Web サイトとして公開しています。検索・ダークモード・コードのコピーが使えるので、学習はこちらが最適です。このリポジトリは教材のソース（Markdown）と執筆・公開の仕組みを管理しています。
 
 ---
 
-## 設計思想
+## この教材について
 
-### 抽象から具体へ
+### 対象読者
+
+Laravel（PHP）で Web アプリケーションを一通り開発した経験を持ち、これから Java / Spring Boot を学ぶ方を対象としています。ルーティング・コントローラ・Eloquent ORM・マイグレーション・バリデーション・認証・REST API・自動テストといった Web 開発の主要素を実務レベルで扱った経験を前提とします。
+
+一方で **Java は未経験でも問題ありません**。すでに持っている「Web 開発の考え方」を活かし、Laravel との対比を中心に Java へ橋渡しします。
+
+### ねらい
+
+これまでメインで扱ってきた Laravel（PHP）に加えて、企業のバックエンド開発で広く使われる Java / Spring Boot を扱えるようになることで、参画できる案件の幅を広げる。それがこの教材のねらいです。
+
+### 修了時のゴール
+
+修了時には、企業に紹介できるジュニアエンジニアとして必要十分な技術力を、行動レベルで身につけています。
+
+- **静的型付け** と **本格的なオブジェクト指向**（継承・インターフェース・抽象クラス・ポリモーフィズム・ジェネリクス）を理解し、設計・読解できる
+- **現代的な Java**（record・enum・Optional・ラムダ・Stream）で、不変データ・null 安全・宣言的なコレクション操作を簡潔に書ける
+- Spring Boot の **DI コンテナ・アノテーション駆動・オートコンフィギュレーション** の「なぜ動くのか」を自分の言葉で説明できる
+- Spring MVC で **REST API** を、Spring Data JPA で **データアクセス層**（リレーション・トランザクション・N+1 対策）を実装できる
+- Spring Security で **認証・認可**（JWT 入門を含む）を、JUnit / Mockito / MockMvc で **テスト** を書ける
+- 例外設計・ログ・設定の外部化・Docker パッケージングなど、**実務で即必要になる土台** を扱える
+
+総合的な到達点として、**1つの REST API アプリケーションをゼロから設計・実装・テストできる** ことをゴールとします。
+
+---
+
+## カリキュラム構成
+
+全 **5 Part / 18 Chapter / 45 Section**。Part 1 から 4 でコードを示しながら概念を体系的に解説し、Part 5 の総合ハンズオンで一気に作り上げます。
+
+| Part | テーマ | Chapter | Section | 内容 |
+|---|---|:---:|:---:|---|
+| **Part 1** | Java 言語の基礎 | 3 | 8 | 静的型付け・JVM・基本文法・コレクション・例外処理 |
+| **Part 2** | オブジェクト指向と現代的な Java | 4 | 9 | 継承・インターフェース・ポリモーフィズム・record・enum・ジェネリクス・Optional・Stream |
+| **Part 3** | Spring Boot で REST API を作る | 5 | 13 | DI コンテナ・Web 層・DTO・バリデーション・Spring Data JPA・サーバーサイドレンダリング入門 |
+| **Part 4** | 実務に耐える品質をつくる | 3 | 6 | 認証・認可（JWT 入門）・テスト・例外設計・ログ・設定の外部化・パッケージング |
+| **Part 5** | 総合ハンズオン（タスク管理 REST API） | 3 | 9 | 認証付きタスク管理 REST API をゼロから設計・実装・テスト |
+
+**学びの流れ**: 言語に慣れる（P1）→ オブジェクト指向で設計する（P2）→ Spring で API を組む（P3）→ 品質を備える（P4）→ ゼロから作る（P5）。
+
+```mermaid
+flowchart LR
+    P1["Part 1<br/>Java 言語の基礎"] --> P2["Part 2<br/>オブジェクト指向と<br/>現代的な Java"]
+    P2 --> P3["Part 3<br/>Spring Boot で<br/>REST API を作る"]
+    P3 --> P4["Part 4<br/>実務に耐える<br/>品質をつくる"]
+    P4 --> P5["Part 5<br/>総合ハンズオン<br/>タスク管理 REST API"]
+```
+
+<details>
+<summary>全 18 Chapter の内訳を見る</summary>
+
+| Chapter | タイトル | Section 数 |
+|---|---|:---:|
+| 1-1 | オリエンテーションと Java という言語 | 3 |
+| 1-2 | 基本文法 | 3 |
+| 1-3 | コレクションと例外処理 | 2 |
+| 2-1 | クラスとカプセル化 | 2 |
+| 2-2 | 継承と抽象クラス | 2 |
+| 2-3 | インターフェースとポリモーフィズム | 2 |
+| 2-4 | 現代的な Java | 3 |
+| 3-1 | Spring Boot 入門 | 3 |
+| 3-2 | DI コンテナとレイヤードアーキテクチャ | 2 |
+| 3-3 | Web 層と REST API の実装 | 3 |
+| 3-4 | データアクセス層と Spring Data JPA | 3 |
+| 3-5 | サーバーサイドレンダリング入門（Spring MVC + Thymeleaf） | 2 |
+| 4-1 | 認証と認可 | 2 |
+| 4-2 | テスト | 2 |
+| 4-3 | 運用の土台 | 2 |
+| 5-1 | 設計とプロジェクト初期化 | 2 |
+| 5-2 | 実装 | 5 |
+| 5-3 | テストと仕上げ | 2 |
+
+各 Section のゴール・前提・参考資料・Laravel 対比は [`OUTLINE.md`](OUTLINE.md) に記載しています。
+
+</details>
+
+---
+
+## ボリューム
+
+本文は全 45 Section で **合計 約 42 万文字**（424,000 字）。技術書およそ 3 冊分のボリュームです。
+
+| Part | テーマ | 文字数 |
+|---|---|---:|
+| Part 1 | Java 言語の基礎 | 約 3.9 万字 |
+| Part 2 | オブジェクト指向と現代的な Java | 約 6.2 万字 |
+| Part 3 | Spring Boot で REST API を作る | 約 14.7 万字 |
+| Part 4 | 実務に耐える品質をつくる | 約 6.9 万字 |
+| Part 5 | 総合ハンズオン（タスク管理 REST API） | 約 10.9 万字 |
+| **合計** | | **約 42 万字** |
+
+---
+
+## 技術スタック
+
+| 領域 | 採用 | 補足 |
+|---|---|---|
+| 言語 | **Java 21 LTS**（OpenJDK / Eclipse Temurin） | コード例は **17 でも通用する書き方** を基本とし、21 専用機能（仮想スレッド・record パターン等）は使用時に明示 |
+| フレームワーク | **Spring Boot 4.0.x** | 現場遭遇率の高い **3.x への読み替え**（Jackson 2・設定差）と **2.x→3.x の javax→jakarta 移行** をコラムで補足 |
+| ビルド | **Maven** | Composer の `composer.json` に近い宣言的な `pom.xml` |
+| データアクセス | **Spring Data JPA / Hibernate** | Eloquent の知識を足がかりに |
+| データベース | **MySQL**（Docker） | Laravel 時代と同じ DBMS |
+| セキュリティ | **Spring Security** | 認証・認可、JWT 入門 |
+| テスト | **JUnit Jupiter / Mockito / Spring Boot Test（MockMvc）** | Boot 4 の BOM が管理する版に準拠 |
+| 環境 | **Docker / Docker Compose**、IntelliJ IDEA | 実装は AI 支援（Claude Code）を前提とする |
+
+> 💡 読者が入る案件は Java / Spring Boot のバージョンがまちまちなので、**学んだ書き方がそのまま現場で通用すること** を最優先しています。バージョン差分は本文を散らかさず、必要な箇所で短いコラムとして補足します。
+
+---
+
+## この教材の特徴
+
+- **全編で Laravel と対比**: 全 Section で PHP / Laravel との対比を織り込み、既習を足がかりに Java の具体（記法・型・作法・差異）へ接続します。
+- **概念を主軸に、Why → What → How で解説**: 構文の暗記ではなく「なぜそうなっているか」の理解を最優先します。各 Part / Chapter の冒頭で全体像（地図）を先に示します。
+- **必要な情報を省略しない**: 読者の Java 知識はゼロ前提のため、基本文法を含めて Java での具体は省略せず解説します（既習の概念は再入門しません）。
+- **ハンズオンは Part 5 に集約**: Part 1 から 4 はコードを示しながら概念を体系的に解説し、実際の構築は総合ハンズオンで一気に行います。
+- **AI（Claude Code）活用を前提**: 構文は AI が補う前提で、構造の理解に重きを置きます。
+
+---
+
+## リポジトリ構成
+
+```text
+java-spring-boot-curriculum/
+├── CLAUDE.md          # 教材の方針（WHO / WHY / WHAT / HOW / MAP）
+├── OUTLINE.md         # カリキュラム設計（全 Part / Chapter / Section のゴール・依存）
+├── README.md          # このファイル
+├── curriculums/       # 教材本体（日本語パス。Part > Chapter > Section）
+├── docs/              # 公開サイト（index.md と stylesheets/ は手書き、それ以外は生成物）
+├── assets/            # 画像・作図プロンプト
+├── scripts/
+│   └── build_docs.py  # curriculums/ → docs/ 変換（スラッグ化・リンク / 画像パス書き換え）
+├── mkdocs.yml         # MkDocs Material 設定
+├── requirements.txt   # サイトビルドの依存
+└── .claude/
+    ├── rules/writing.md   # 執筆ルール（文体・テンプレート・用語）
+    └── skills/            # 執筆・運用スキル（下記）
+```
+
+| ファイル | 役割 |
+|---|---|
+| [`CLAUDE.md`](CLAUDE.md) | 誰に・なぜ・何を・どう教えるか |
+| [`OUTLINE.md`](OUTLINE.md) | 各 Section のゴール・種類・順序・依存関係・参考資料・Laravel 対比 |
+| [`.claude/rules/writing.md`](.claude/rules/writing.md) | 文体・テンプレート・用語・図表形式 |
+| `curriculums/` | 読者に届く教材そのもの |
+
+---
+
+## 教材の執筆・メンテナンス
+
+この教材は Claude Code のスキルで執筆・保守しています。コントリビュートや更新を行う場合の参考にしてください。
+
+### 教材の組み立て方
+
+全体方針（`CLAUDE.md`）を Section 単位の構造（`OUTLINE.md`）へ分解し、執筆ルール（`writing.md`）に沿って教材本体（`curriculums/`）を書きます。
 
 ```mermaid
 flowchart TD
-    A["CLAUDE.md\n哲学"]
-
-    subgraph outline["OUTLINE.md — 構造設計"]
-        direction LR
-        B1["Chapter 1\nSection 1-1 / 1-2"]
-        B2["Chapter 2\nSection 2-1 / 2-2"]
-        B3["… Chapter N"]
-    end
-
-    subgraph curr["curriculums/ — 教材本体"]
-        direction LR
-        C1["1-1.md"]
-        C2["1-2.md"]
-        C3["2-1.md"]
-        C4["2-2.md"]
-        C5["… N-1.md, N-2.md"]
-    end
-
-    A -->|MECE 分解| B1 & B2 & B3
-    B1 -->|執筆| C1 & C2
-    B2 -->|執筆| C3 & C4
-    B3 -->|執筆| C5
-
-    W["writing.md\nルール・人格・用語"] -.->|執筆時に適用| curr
+    A["CLAUDE.md<br/>全体方針（WHO / WHY / WHAT / HOW）"] -->|Section に分解| B["OUTLINE.md<br/>構造（Part > Chapter > Section）"]
+    B -->|執筆| C["curriculums/<br/>教材本体"]
+    W["writing.md<br/>文体・テンプレート・用語"] -.->|執筆時に適用| C
 ```
 
-| 層 | ファイル | 役割 |
-|---|---|---|
-| 哲学 | `CLAUDE.md` | 誰に、なぜ、何を、どう教えるか |
-| 設計 | `OUTLINE.md` | 各 Section のゴール・種類・順序・依存関係 |
-| ルール | `writing.md` | 文体・テンプレート・用語・図表形式 |
-| コンテンツ | `curriculums/` | 読者に届く教材そのもの |
+### スキル
 
-### 階層構造
-
-教材の規模に応じて `/setup` で選択します。
-
-| 層数 | 構造 | 用途 |
-|---|---|---|
-| 3層 | Part > Chapter > Section | 大規模教材（複数の大テーマ） |
-| 2層 | Chapter > Section | 中規模教材（1テーマを深掘り） |
-| 1層 | Section のみ | 小規模教材・ガイド集 |
-
-### 3種の Section
-
-各 Section には種類を付与し、テンプレートの構造を決定します。
-
-| 種類 | 内容 | 選択基準 |
-|---|---|---|
-| **概念** | 意義・仕組み・使い方を解説 | 手を動かす要素がない |
-| **ハンズオン** | 概念で学んだ機能を実践 | 事前に概念 Section で学んだ内容を実践する |
-| **混合** | 概念を学びながらすぐに手を動かす | 概念と実践を分けると不自然 |
-
-すべての種類で共通の骨格（🎯学習目標 → 導入/🧠 → 本文 → ✨まとめ）を持ち、種類ごとに本文の構成が異なります。ハンズオン・混合では `## 🏃 実践` > `### 🏃 Step N` の統一された Step 構造を使います。
-
----
-
-## 5つのスキル
-
-| スキル | やること | 入力例 |
-|---|---|---|
-| `/setup` | 教材の哲学定義 → 構造設計 → 執筆ルール調整 | `/setup` |
-| `/write` | OUTLINE に基づいて執筆 | `/write Chapter 2-1`, `/write 全て` |
-| `/review` | 4観点でレビュー（自動修正しない） | `/review Part 1` |
-| `/check-updates` | 参考資料との鮮度チェック | `/check-updates` |
-| `/illustrate` | Gemini Pro で概念図を生成・挿入 | `/illustrate Part 2`, `/illustrate scan 2-1` |
-
-### /setup の流れ
-
-対話形式で5つの Phase を進めます。
-
-```mermaid
-flowchart LR
-    P0["Phase 0\nTOPIC・スコープ確定"] -->|承認| P1["Phase 1\n哲学の定義\nWHO/WHY/WHAT/HOW/MAP"]
-    P1 -->|承認| P2["Phase 2\nOUTLINE 構造化\nMECE 分解"]
-    P2 -->|承認| P3["Phase 3\nwriting.md\nルール調整"]
-    P3 --> P4["Phase 4\n最終確認"]
-```
-
-各 Phase の完了時にユーザーの承認を取ってから次に進みます。途中でスコープが変わった場合は Phase 0 に戻って再確認します。
-
-### /write の流れ
-
-```mermaid
-flowchart LR
-    W1["1. 準備\n参考資料取得・整理"] --> W2["2. 方針合わせ\n体験設計・見出し構成"]
-    W2 --> W3["3. 執筆"]
-    W3 --> W4["4. セルフチェック"]
-    W4 -.->|提案| R["/review"]
-```
-
-- 参考資料から数値・仕様を箇条書きで整理し、記憶ではなくその整理結果を参照して書く
-- 大規模スコープでは Chapter 単位で方針合わせと中間チェックを行う
-- 完了後に `/review` の実行を提案する
-
-### /review の観点
-
-| 観点 | 内容 |
+| スキル | やること |
 |---|---|
-| ルール準拠 | writing.md のテンプレート・文体に従っているか |
-| 設計との整合 | OUTLINE.md のゴール・種類と一致しているか |
-| 正確性 | 参考資料の表記に従っているか |
-| 実践フォロー可能性 | ハンズオンを読者だけで完遂できるか |
+| `/setup` | 方針（CLAUDE.md）・構造（OUTLINE.md）・執筆ルール（writing.md）を対話的に決める |
+| `/write` | OUTLINE に基づいて Section を執筆する（Part / Chapter / Section 単位、または一括） |
+| `/review` | 品質・用語・整合性をレビューする（自動修正はしない） |
+| `/check-updates` | 公式ドキュメント・Changelog と照合し、更新が必要な箇所を報告する |
+| `/illustrate` | Gemini で概念図を生成し、Section に挿入する |
 
-レビュー前に Grep ベースの機械的チェック（太字スペース・ダッシュ記号・言語指定なしコードブロック等）を自動実行し、誤検知を減らします。
+### 公開フロー
 
-### /illustrate の流れ
+`main` への push で **自動ビルド & デプロイ** されます（`.github/workflows/deploy.yml` が `build_docs.py` → `mkdocs build --strict` → GitHub Pages を実行）。教材を更新するときは `curriculums/` を編集して `main` に push するだけです。
 
-Gemini Pro の画像生成 API を使い、Mermaid では表現しにくい「直感的なメンタルモデル」を概念図として生成・挿入します。
+ローカルでプレビューする場合:
 
-| モード | やること |
-|---|---|
-| `scan` | 指定範囲の Section を読み、AI 画像が効果的な箇所を特定して報告 |
-| `generate` | 指定した画像を生成し、対象 Section に挿入 |
-| フル | scan → ユーザー確認 → generate を一気通貫で実行 |
+```bash
+# 依存をインストール
+pip install -r requirements.txt
 
-画像は導入セクションの 🧠 直後に配置します。Mermaid（正確な処理フロー）と illustrate（メンタルモデル・俯瞰図）を使い分けます。
+# curriculums/（日本語パス）を docs/（英語スラッグ）へ変換
+python scripts/build_docs.py
 
-> **前提**: `GEMINI_API_KEY` 環境変数の設定が必要です。[Google AI Studio](https://aistudio.google.com/apikey) で取得できます。
-
----
-
-## ワークフロー
-
-```mermaid
-flowchart LR
-    setup["/setup"] --> write["/write"]
-    write --> review["/review"]
-    review -->|修正| write
-    review --> publish["公開"]
-    check["/check-updates\n（定期実行）"] -->|更新必要| write
-    illustrate["/illustrate"] -->|画像挿入| write
+# ローカルサーバで確認（http://127.0.0.1:8000）
+mkdocs serve
 ```
 
-### 初回
-
-1. `/setup` で対話的に CLAUDE.md・OUTLINE.md・writing.md を生成
-2. `/write` で Section を執筆（Part / Chapter / Section 単位、または全体一括）
-3. `/review` でレビュー、指摘を修正
-
-### メンテナンス
-
-- 参考資料がオンラインの場合: `/check-updates` を月1回実行
-- 破壊的変更が見つかったら `/write` で即修正
-- 構成変更が必要な場合は `/setup` を再実行
-
----
-
-## ファイル構成
-
-```
-project-root/
-├── CLAUDE.md                 # 哲学（WHO/WHY/WHAT/HOW/MAP）
-├── OUTLINE.md                # 構造設計
-├── README.md
-├── .claude/
-│   ├── rules/writing.md      # 執筆ルール（文体・テンプレート・用語）
-│   ├── skills/
-│   │   ├── setup/            # /setup スキル
-│   │   ├── write/            # /write スキル
-│   │   ├── review/           # /review スキル
-│   │   ├── check-updates/    # /check-updates スキル
-│   │   └── illustrate/       # /illustrate スキル
-│   └── settings.json
-├── curriculums/              # 教材本体（階層構造に応じたディレクトリ）
-└── assets/
-    └── diagrams/             # /illustrate の生成画像・プロンプト
-```
+> 💡 `docs/index.md` と `docs/stylesheets/` は手書きで管理し、`docs/part-*` ・ `docs/assets` ・ `site/` は生成物のため `.gitignore` 対象です。テーマカラーは公式 Java カラー（Java Blue `#007396` / Java Orange `#ED8B00`）を `docs/stylesheets/custom.css` で定義しています。
