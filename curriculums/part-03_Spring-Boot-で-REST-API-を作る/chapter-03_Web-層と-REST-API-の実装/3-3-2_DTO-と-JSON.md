@@ -131,6 +131,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;   // ← アノテーシ�
 
 ⚠️ **注意**: IDE の補完で `ObjectMapper` を import するとき、候補に `com.fasterxml.jackson.databind.ObjectMapper`（Jackson 2 の古い方）が出ることがあります。Spring Boot 4 で正しいのは `tools.jackson.databind` 側です。Jackson 2 のオートコンフィグは段階移行のため非推奨の形で当面残っているので、誤って古い import を選ぶとかみ合わず混乱します。`tools.jackson` を選んでください。
 
+💡 **Jackson 3 の例外**: Jackson 3 では、変換時に投げられる例外の基底クラスが **`RuntimeException`（非検査例外）** になりました。Jackson 2 では検査例外（`IOException` 系）で `throws` や `try` / `catch` を求められましたが、Jackson 3 ではその必要はありません（検査例外 / 非検査例外は 1-3-2）。DTO の自動変換では普段この例外を直接扱いませんが、`ObjectMapper` を直接呼ぶコードを書くときに効いてきます。
+
 ### よく使う Jackson アノテーション
 
 DTO のフィールド名と JSON のキー名を変えたい、特定のフィールドを JSON に出したくない、といった調整はアノテーションで行います。これらは前述のとおり `com.fasterxml.jackson.annotation` パッケージです。
@@ -213,7 +215,7 @@ private TaskResponse toResponse(Task task) {
     return new TaskResponse(
             task.getId(),
             task.getTitle(),
-            task.isDone(),         // boolean の done は getter が isDone()（2-4-1 のフィールド名を踏襲）
+            task.isDone(),         // boolean の getter は isDone()（JavaBeans 規約は 2-1-2。record の done() とは別）
             task.getDueDate()
     );
 }
