@@ -42,7 +42,7 @@
 5-2-2 で置いた暫定の `SecurityConfig` を、本物に書き換えます。4-1-1 で学んだとおり、`@EnableWebSecurity` を付け、`PasswordEncoder` と `SecurityFilterChain` を Bean として定義します。認証方式は、まずは確認しやすい HTTP Basic にします（次のセクションで JWT に切り替えます）。
 
 ```java
-// src/main/java/com/example/taskapp/config/SecurityConfig.java（暫定版を置き換える）
+// 全文を置き換え: src/main/java/com/example/taskapp/config/SecurityConfig.java（5-2-2 の暫定版をこれに）
 package com.example.taskapp.config;
 
 import org.springframework.context.annotation.Bean;
@@ -86,7 +86,7 @@ public class SecurityConfig {
 Spring Security に「ユーザー名から `users` テーブルを引く方法」を教えます。4-1-2 で学んだ `UserDetailsService` の実装です。`security` パッケージに置きます。
 
 ```java
-// src/main/java/com/example/taskapp/security/CustomUserDetailsService.java
+// 新規作成: src/main/java/com/example/taskapp/security/CustomUserDetailsService.java
 package com.example.taskapp.security;
 
 import com.example.taskapp.entity.User;
@@ -129,7 +129,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 登録の入力 DTO と、重複時の例外、登録ロジック、エンドポイントを用意します。
 
 ```java
-// src/main/java/com/example/taskapp/dto/RegisterRequest.java
+// 新規作成: src/main/java/com/example/taskapp/dto/RegisterRequest.java
 package com.example.taskapp.dto;
 
 import jakarta.validation.constraints.Email;
@@ -145,7 +145,7 @@ public record RegisterRequest(
 ```
 
 ```java
-// src/main/java/com/example/taskapp/exception/DuplicateUsernameException.java
+// 新規作成: src/main/java/com/example/taskapp/exception/DuplicateUsernameException.java
 package com.example.taskapp.exception;
 
 public class DuplicateUsernameException extends RuntimeException {
@@ -158,7 +158,7 @@ public class DuplicateUsernameException extends RuntimeException {
 `GlobalExceptionHandler` に、重複を 409（Conflict）に変換するハンドラを足します。
 
 ```java
-// src/main/java/com/example/taskapp/exception/GlobalExceptionHandler.java（ハンドラを追加）
+// 既存に追記: GlobalExceptionHandler.java（import は先頭、409 ハンドラをクラス内に）
 import com.example.taskapp.dto.ErrorResponse;
 
 @ExceptionHandler(DuplicateUsernameException.class)
@@ -171,7 +171,7 @@ public ResponseEntity<ErrorResponse> handleDuplicateUsername(DuplicateUsernameEx
 登録ロジックは `AuthService` に書きます。パスワードは `PasswordEncoder.encode` でハッシュ化してから保存します（4-1-1）。
 
 ```java
-// src/main/java/com/example/taskapp/service/AuthService.java
+// 新規作成: src/main/java/com/example/taskapp/service/AuthService.java
 package com.example.taskapp.service;
 
 import com.example.taskapp.dto.RegisterRequest;
@@ -206,7 +206,7 @@ public class AuthService {
 ```
 
 ```java
-// src/main/java/com/example/taskapp/controller/AuthController.java
+// 新規作成: src/main/java/com/example/taskapp/controller/AuthController.java
 package com.example.taskapp.controller;
 
 import com.example.taskapp.dto.RegisterRequest;
@@ -235,7 +235,7 @@ public class AuthController {
 
 ### 🏃 Step 4: 登録して認証を確認する
 
-`./mvnw spring-boot:run` でアプリを起動し（MySQL は `docker compose up -d` で起動済み）、ユーザーを登録します。登録の成功時はレスポンスボディが無いので、`-i` を付けてステータス（201）を確認します。
+Step 1〜3 で `SecurityConfig`・`CustomUserDetailsService`・`AuthController` などを追加したので、**アプリを再起動** して反映します（起動したままなら `Ctrl + C` で止めてから `./mvnw spring-boot:run`。再起動しないと、追加した `/api/auth/register` がまだ無く `404` になります）。MySQL は `docker compose up -d` で起動済みとします。再起動したら、ユーザーを登録します。登録の成功時はレスポンスボディが無いので、`-i` を付けてステータス（201）を確認します。
 
 ```bash
 # 登録（-i でステータス 201 を確認。成功時はボディなし）
@@ -299,6 +299,8 @@ sequenceDiagram
 - パスワードは `PasswordEncoder.encode` でハッシュ化して保存し、照合は `matches` で行う（平文は保存しない・ログに出さない）
 - `UserDetailsService.loadUserByUsername` を実装し、自前の `User` を Spring Security 標準の `UserDetails` に詰め替えて返す（4-1-2）。これで生成パスワードは出なくなる
 - 登録ユーザーの資格情報でだけ API にアクセスできる状態になった。認証方式は今は HTTP Basic
+
+📚 **使った概念の復習**: 4-1-1（Spring Security・SecurityFilterChain・パスワードハッシュ）/ 4-1-2（UserDetailsService・認証フロー）
 
 ---
 

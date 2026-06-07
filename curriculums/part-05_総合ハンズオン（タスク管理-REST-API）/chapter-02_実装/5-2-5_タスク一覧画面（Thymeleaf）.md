@@ -60,7 +60,7 @@ flowchart LR
 5-2-4 で作ったログインエンドポイントを更新し、トークンを JSON の本文で返すのに加えて、`HttpOnly` Cookie にもセットします。
 
 ```java
-// AuthController.java の login を更新（追加で必要な import は下の 4 つ。LoginRequest / TokenResponse は 5-2-4 で追加済み）
+// メソッドを置き換え: AuthController.java の login（Cookie もセットする版に。追加 import は下の 4 つ。LoginRequest / TokenResponse は 5-2-4 で追加済み）
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -90,7 +90,7 @@ public TokenResponse login(@Valid @RequestBody LoginRequest request, HttpServlet
 `oauth2ResourceServer().jwt()` は既定で `Authorization` ヘッダーからトークンを読みます。これに、「ヘッダーが無く、かつ安全な GET のときだけ Cookie からも読む」フォールバックを足します。トークンの取り出し方を決めるのが `BearerTokenResolver` です。`security` パッケージに作ります。
 
 ```java
-// src/main/java/com/example/taskapp/security/CookieOrHeaderBearerTokenResolver.java
+// 新規作成: src/main/java/com/example/taskapp/security/CookieOrHeaderBearerTokenResolver.java
 package com.example.taskapp.security;
 
 import jakarta.servlet.http.Cookie;
@@ -132,7 +132,7 @@ public class CookieOrHeaderBearerTokenResolver implements BearerTokenResolver {
 この Resolver を `SecurityConfig` に組み込みます。`filterChain` メソッドを再び置き換えます。5-2-4 の内容に、引数の `bearerTokenResolver` と `.bearerTokenResolver(...)` を足すだけです（`Customizer` / `SessionCreationPolicy` は import 済みなので、新たに追加する import は `CookieOrHeaderBearerTokenResolver` の 1 つです）。
 
 ```java
-// SecurityConfig.java の filterChain を更新（Resolver を受け取り、oauth2ResourceServer に渡す）
+// メソッドを置き換え: SecurityConfig.java の filterChain（5-2-4 の内容に、引数の resolver と .bearerTokenResolver(...) を足す）
 import com.example.taskapp.security.CookieOrHeaderBearerTokenResolver;
 
 @Bean
@@ -140,7 +140,7 @@ public SecurityFilterChain filterChain(HttpSecurity http,
                                        CookieOrHeaderBearerTokenResolver bearerTokenResolver) throws Exception {
     http
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/api/auth/**", "/login.html").permitAll()   // 登録・ログイン API と、ログインページ（Step 6 で作る /login.html）は公開
             .anyRequest().authenticated()       // /api/tasks も /tasks（画面）も認証必須
         )
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -159,7 +159,7 @@ public SecurityFilterChain filterChain(HttpSecurity http,
 3-5-1 で学んだとおり、画面を返すのは `@Controller`（`@RestController` ではありません）です。`Model` にデータを載せ、ビュー名を返します。まず、テンプレートに渡すための **エンティティ** を取得するメソッドを `TaskService` に足します。
 
 ```java
-// TaskService.java にメソッドを追加（Task / List は 5-2-4 で import 済み）
+// 既存に追記: TaskService.java（findMyTaskEntities メソッドをクラス内に。Task / List は import 済み）
 
 @Transactional(readOnly = true)
 public List<Task> findMyTaskEntities(String username) {
@@ -168,7 +168,7 @@ public List<Task> findMyTaskEntities(String username) {
 ```
 
 ```java
-// src/main/java/com/example/taskapp/controller/TaskViewController.java
+// 新規作成: src/main/java/com/example/taskapp/controller/TaskViewController.java
 package com.example.taskapp.controller;
 
 import com.example.taskapp.entity.Task;
@@ -206,7 +206,7 @@ public class TaskViewController {
 3-5-2 で学んだ構文で、一覧テンプレートを作ります。`src/main/resources/templates/tasks/list.html` です。`th:each` で繰り返し、`th:if` / `th:unless` で空のときの出し分けをします。
 
 ```html
-<!-- src/main/resources/templates/tasks/list.html -->
+<!-- 新規作成: src/main/resources/templates/tasks/list.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -241,7 +241,7 @@ public class TaskViewController {
 共通フッターはフラグメントに切り出します。`src/main/resources/templates/fragments/layout.html` です。
 
 ```html
-<!-- src/main/resources/templates/fragments/layout.html -->
+<!-- 新規作成: src/main/resources/templates/fragments/layout.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
@@ -254,27 +254,56 @@ public class TaskViewController {
 
 💡 **Laravel との対応**: `th:each` は Blade の `@foreach`、`th:if` / `th:unless` は `@if` / `@unless`、`th:fragment` + `th:replace` は `@include` に相当します（3-5-2）。`resources/views/tasks/index.blade.php` が `src/main/resources/templates/tasks/list.html` に変わっただけ、と捉えてください。
 
-### 🏃 Step 6: ブラウザで確認する
+### 🏃 Step 6: ログインページを置いてブラウザで確認する
 
-`./mvnw spring-boot:run` でアプリを起動します。画面を見るにはブラウザに Cookie をセットする必要があるので、まずブラウザ上でログインします。`http://localhost:8080/` を開きます（この時点では `/` に対応する画面はなく認証も必要なので、**401 が返って空白やエラー表示になりますが、正常です**。Cookie を同じオリジンにセットするために開くだけです）。ブラウザの開発者ツールのコンソールで次を実行すると、ログイン API が呼ばれて `HttpOnly` Cookie がセットされます。
+画面で確認するには、ブラウザに `ACCESS_TOKEN` Cookie をセットする必要があります（`curl` でログインしてもブラウザの Cookie には入りません）。一番素直なのは、**`localhost:8080` 上で動く小さなログインページ** を 1 枚置くことです。`src/main/resources/static/` に置いた HTML は、Spring Boot が `http://localhost:8080/<ファイル名>` で配信します（`/login.html` は Step 3 の `SecurityConfig` で公開済み）。
 
-```javascript
-// ブラウザの開発者ツール → Console で実行（Cookie をセットする）
-const res = await fetch('/api/auth/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ username: 'alice', password: 'password123' })
-});
-console.log(res.status);   // 200 ならログイン成功（Cookie がセットされている）
+```html
+<!-- 新規作成: src/main/resources/static/login.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ログイン</title>
+</head>
+<body>
+  <h1>ログイン</h1>
+  <form id="loginForm">
+    <p><input name="username" placeholder="ユーザー名" value="alice"></p>
+    <p><input name="password" type="password" placeholder="パスワード" value="password123"></p>
+    <button type="submit">ログイン</button>
+  </form>
+  <p id="message"></p>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.target;
+      const res = await fetch('/api/auth/login', {     // 同一オリジンなので CORS は起きない
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: form.username.value, password: form.password.value })
+      });
+      if (res.ok) {
+        location.href = '/tasks';                       // 成功 → HttpOnly Cookie がセットされ、タスク一覧へ
+      } else {
+        document.getElementById('message').textContent = 'ログインに失敗しました（ステータス ' + res.status + '）';
+      }
+    });
+  </script>
+</body>
+</html>
 ```
 
-コンソールに `200` が表示されたら、ブラウザのアドレスバーで `http://localhost:8080/tasks` を開きます。すると、Cookie のトークンで認証され、`alice` のタスク一覧が HTML で表示されます（5-2-4 で alice のタスクを作っていれば、それが並びます）。同じデータを、API では `curl ... /api/tasks`（JSON）で、画面では `/tasks`（HTML）で見られることを確認してください。
+アプリを再起動し（`Ctrl + C` → `./mvnw spring-boot:run`）、ブラウザで `http://localhost:8080/login.html` を開きます。フォームは `alice` / `password123` が入った状態なので、そのまま「ログイン」を押すと、`HttpOnly` Cookie がセットされて `/tasks` に移動し、`alice` のタスク一覧が HTML で表示されます（5-2-4 で alice のタスクを作っていれば、それが並びます。別のパスワードで登録していたら、その値に直してください）。同じデータを、API では `curl ... /api/tasks`（JSON）で、画面では `/tasks`（HTML）で見られることを確認してください。
 
-> ⚠️ **よくあるエラー**: `/tasks` を開くと 401 になる。
+> 💡 **コンソールに `fetch` を貼り付ける方法を採らない理由**: 認証必須の `/` を直接開くと、ボディの無い `401` が返って Chrome は `chrome-error://` のエラーページを表示します。そこから開発者ツールのコンソールで相対 URL を `fetch` しても `localhost:8080` には飛ばず、絶対 URL にすると今度はエラーページが別オリジン（`null`）扱いになり CORS で弾かれます（`@CrossOrigin(origins = "*")` を足せば通りますが、全オリジン許可はセキュリティ上避けたい）。さらに新しい Chrome では、コンソールへの貼り付け自体が `allow pasting` の確認でブロックされます。**同一オリジンの 200 ページ（このログインページ）から叩けば**、これらは一切起きません。
+
+> ⚠️ **よくあるエラー**: `/tasks` を開くと `401` になる。
 >
-> **原因**: ブラウザに `ACCESS_TOKEN` Cookie がセットされていません（ログインをブラウザで実行していない、または Cookie の有効期限切れ）。`curl` でのログインはブラウザの Cookie には反映されません。
+> **原因**: ブラウザに `ACCESS_TOKEN` Cookie がセットされていません（ログインページでログインしていない、または Cookie の有効期限切れ）。
 >
-> **対処法**: 上のように **ブラウザ上で** ログイン API を呼んでから `/tasks` を開きます。本番では、ログインフォームの画面を用意して同じ Cookie をセットするのが一般的です（本教材の最小構成ではコンソールから実行します）。
+> **対処法**: もう一度 `http://localhost:8080/login.html` からログインしてから `/tasks` を開きます。
 
 <!-- TODO: 画像追加 - ブラウザで /tasks を開いたタスク一覧画面（タイトル・状態・期限のテーブル） -->
 
@@ -287,7 +316,8 @@ console.log(res.status);   // 200 ならログイン成功（Cookie がセット
 - [ ] `SecurityConfig` に Resolver を組み込んだ
 - [ ] `@Controller` の `TaskViewController` を作り、`Model` にエンティティを載せてビュー名を返した
 - [ ] `templates/tasks/list.html` と `templates/fragments/layout.html` を作った
-- [ ] ブラウザでログイン → `/tasks` でタスク一覧が HTML 表示されることを確認した
+- [ ] `static/login.html`（ログインページ）を作り、`SecurityConfig` で `/login.html` を公開した
+- [ ] `login.html` からログイン → `/tasks` でタスク一覧が HTML 表示されることを確認した
 
 ---
 
@@ -297,6 +327,8 @@ console.log(res.status);   // 200 ならログイン成功（Cookie がセット
 - ブラウザのページ遷移では `Authorization` ヘッダーが飛ばないので、ログイン時に JWT を `HttpOnly` Cookie にも載せ、画面ルートはそこから読む。検証は同じ `JwtDecoder` で 1 本化できる
 - Cookie からの読み取りは **安全な GET だけ** に限り、更新系はヘッダーのみ受け付けることで CSRF を防ぐ。`SameSite` も併用する
 - Thymeleaf は getter で値を取るので、画面にはエンティティを渡すのが自然（サーバ内で描画され、クライアントには HTML だけが出ていく）
+
+📚 **使った概念の復習**: 3-5-1（画面を返す Spring MVC）/ 3-5-2（Thymeleaf テンプレート）
 
 ---
 
