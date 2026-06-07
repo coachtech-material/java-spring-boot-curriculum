@@ -143,7 +143,7 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
   - ゴール: `private` / `protected` / `public`・getter / setter・`static` メンバーを理解し、なぜ実装を隠すのかを説明できる
   - 前提: [2-1-1]
   - 参考資料: [dev.java — Learn](https://dev.java/learn/)
-  - Laravel 対比: CT では `public` 中心だった。設計に効くアクセス修飾子の使い分けを新たに学ぶ
+  - Laravel 対比: Laravel（PHP）では `public` 中心だった。設計に効くアクセス修飾子の使い分けを新たに学ぶ
 
 ### Chapter 2-2: 継承と抽象クラス（2 Section）
 
@@ -383,7 +383,7 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
 
 → ゴール: Part 1〜4 の全知識を統合し、認証付きタスク管理 REST API をゼロから設計・実装・テストする。AI（Claude Code）活用を前提に進める。
 
-題材は CT 最終課題（タスク管理アプリ）と同系統とし、「Laravel で作ったものを Java で作り直す」感覚で対比を最大化する。
+題材は認証付きのタスク管理アプリ（ユーザー / タスク / タグ）とし、「Laravel で作ったものを Java で作り直す」感覚で対比を最大化する。
 
 ### 実践プロジェクトの設計
 
@@ -417,7 +417,7 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
   - ゴール: 題材の要件を整理し、ドメインモデル・テーブル・API エンドポイントを設計する。AI（Claude Code）を使った設計の進め方を体験する
   - 前提: [Part 1〜4 全般]
   - 参考資料: [Spring Boot Reference](https://docs.spring.io/spring-boot/reference/index.html)
-  - Laravel 対比: CT 最終課題の「要件 → DB 設計 → 実装」の流れを Java / Spring Boot で再現
+  - Laravel 対比: Laravel での「要件 → DB 設計 → 実装」の流れを Java / Spring Boot で再現
 - **5-1-2 環境構築とプロジェクト作成**
   - 種類: ハンズオン
   - 逆リンク: 3-1-2, 3-1-3, 4-3-2

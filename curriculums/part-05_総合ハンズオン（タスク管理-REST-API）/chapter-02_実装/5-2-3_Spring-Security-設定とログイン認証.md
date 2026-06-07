@@ -122,7 +122,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 ⚠️ **2 つの `User` に注意**: ここには `User` が 2 つ登場します。あなたのエンティティ `com.example.taskapp.entity.User` と、Spring Security 標準の `org.springframework.security.core.userdetails.User` です。後者は紛らわしいので、4-1-2 と同じく **完全修飾名（フルパス）** で書いて区別しています。
 
-💡 **生成パスワードが消える**: この `UserDetailsService` を Bean として用意すると、5-1-2 で起動ログに出ていた `Using generated security password:` が出なくなります。Spring Security が「ユーザーの引き方は自前で用意された」と判断し、開発用の仮ユーザーを作らなくなるからです。これも接続できた証拠です。
+💡 **生成パスワードが消える**: この `UserDetailsService` を Bean として用意すると、5-1-2 で起動ログに出ていた `Using generated security password:` が出なくなります。Spring Security が「ユーザーの引き方は自前で用意された」と判断し、開発用の仮ユーザーを作らなくなるからです。次の Step 4 でアプリを起動したときに、この行が出なくなっていることを確認できます。これも接続できた証拠です。
 
 ### 🏃 Step 3: ユーザー登録を実装する
 
@@ -235,11 +235,11 @@ public class AuthController {
 
 ### 🏃 Step 4: 登録して認証を確認する
 
-アプリを起動し（MySQL 起動済み）、ユーザーを登録します。
+`./mvnw spring-boot:run` でアプリを起動し（MySQL は `docker compose up -d` で起動済み）、ユーザーを登録します。登録の成功時はレスポンスボディが無いので、`-i` を付けてステータス（201）を確認します。
 
 ```bash
-# 登録（201）
-curl -X POST http://localhost:8080/api/auth/register \
+# 登録（-i でステータス 201 を確認。成功時はボディなし）
+curl -i -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username":"alice","email":"alice@example.com","password":"password123"}'
 ```

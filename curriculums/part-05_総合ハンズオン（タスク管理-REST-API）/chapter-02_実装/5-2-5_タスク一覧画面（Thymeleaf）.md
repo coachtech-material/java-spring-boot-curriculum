@@ -60,9 +60,7 @@ flowchart LR
 5-2-4 で作ったログインエンドポイントを更新し、トークンを JSON の本文で返すのに加えて、`HttpOnly` Cookie にもセットします。
 
 ```java
-// AuthController.java の login を更新
-import com.example.taskapp.dto.LoginRequest;
-import com.example.taskapp.dto.TokenResponse;
+// AuthController.java の login を更新（追加で必要な import は下の 4 つ。LoginRequest / TokenResponse は 5-2-4 で追加済み）
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -131,7 +129,7 @@ public class CookieOrHeaderBearerTokenResolver implements BearerTokenResolver {
 
 🔑 **Cookie を読むのは GET だけ**: ②で GET に限っているのが安全上の肝です。もし POST / PUT / DELETE でも Cookie を受け付けると、ブラウザが Cookie を自動送信する性質を突かれ、CSRF で更新系を叩かれる恐れがあります。更新系の API は **ヘッダーのトークンだけ** を受け付けるので、Cookie を使った CSRF では通りません。読み取り専用の GET（画面表示）に限れば、状態を変えないので安全です。
 
-この Resolver を `SecurityConfig` に組み込みます。`filterChain` を更新します（`oauth2ResourceServer` に Resolver を渡すだけ）。
+この Resolver を `SecurityConfig` に組み込みます。`filterChain` メソッドを再び置き換えます。5-2-4 の内容に、引数の `bearerTokenResolver` と `.bearerTokenResolver(...)` を足すだけです（`Customizer` / `SessionCreationPolicy` は import 済みなので、新たに追加する import は `CookieOrHeaderBearerTokenResolver` の 1 つです）。
 
 ```java
 // SecurityConfig.java の filterChain を更新（Resolver を受け取り、oauth2ResourceServer に渡す）
@@ -161,8 +159,7 @@ public SecurityFilterChain filterChain(HttpSecurity http,
 3-5-1 で学んだとおり、画面を返すのは `@Controller`（`@RestController` ではありません）です。`Model` にデータを載せ、ビュー名を返します。まず、テンプレートに渡すための **エンティティ** を取得するメソッドを `TaskService` に足します。
 
 ```java
-// TaskService.java にメソッドを追加
-import com.example.taskapp.entity.Task;
+// TaskService.java にメソッドを追加（Task / List は 5-2-4 で import 済み）
 
 @Transactional(readOnly = true)
 public List<Task> findMyTaskEntities(String username) {
@@ -259,18 +256,19 @@ public class TaskViewController {
 
 ### 🏃 Step 6: ブラウザで確認する
 
-アプリを起動します。画面を見るにはブラウザに Cookie をセットする必要があるので、まずブラウザ上でログインします。`http://localhost:8080/` を開き、ブラウザの開発者ツールのコンソールで次を実行すると、ログイン API が呼ばれて `HttpOnly` Cookie がセットされます。
+`./mvnw spring-boot:run` でアプリを起動します。画面を見るにはブラウザに Cookie をセットする必要があるので、まずブラウザ上でログインします。`http://localhost:8080/` を開きます（この時点では `/` に対応する画面はなく認証も必要なので、**401 が返って空白やエラー表示になりますが、正常です**。Cookie を同じオリジンにセットするために開くだけです）。ブラウザの開発者ツールのコンソールで次を実行すると、ログイン API が呼ばれて `HttpOnly` Cookie がセットされます。
 
 ```javascript
 // ブラウザの開発者ツール → Console で実行（Cookie をセットする）
-fetch('/api/auth/login', {
+const res = await fetch('/api/auth/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ username: 'alice', password: 'password123' })
 });
+console.log(res.status);   // 200 ならログイン成功（Cookie がセットされている）
 ```
 
-`fetch` の応答が 200 になったのを確認したら（`fetch` は非同期です）、ブラウザのアドレスバーで `http://localhost:8080/tasks` を開きます。すると、Cookie のトークンで認証され、`alice` のタスク一覧が HTML で表示されます。同じデータを、API では `curl ... /api/tasks`（JSON）で、画面では `/tasks`（HTML）で見られることを確認してください。
+コンソールに `200` が表示されたら、ブラウザのアドレスバーで `http://localhost:8080/tasks` を開きます。すると、Cookie のトークンで認証され、`alice` のタスク一覧が HTML で表示されます（5-2-4 で alice のタスクを作っていれば、それが並びます）。同じデータを、API では `curl ... /api/tasks`（JSON）で、画面では `/tasks`（HTML）で見られることを確認してください。
 
 > ⚠️ **よくあるエラー**: `/tasks` を開くと 401 になる。
 >
