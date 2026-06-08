@@ -190,9 +190,9 @@ System.out.println(p.getLevel());   // 3
 
 ---
 
-## 🏃 手を動かす（任意）: record と enum を試す
+## 🏃 手を動かす: record と enum を試す
 
-ここは任意です（飛ばしても本筋に支障はありません）。1-1-4 の手順で JShell を起動して試します。まず `record` を定義します（1 行で、コンストラクタ・アクセサ・`equals`・`toString` が自動生成されます）。次のブロックを貼り付けます。
+1-1-4 の手順で JShell を起動して試します。まず `record` を定義します（1 行で、コンストラクタ・アクセサ・`equals`・`toString` が自動生成されます）。次のブロックを貼り付けます。
 
 ```java
 record TaskSummary(Long id, String title, boolean done) {}
