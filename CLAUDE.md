@@ -63,7 +63,7 @@
 - **全体像を先に示す**: 各 Part / Chapter の冒頭で「これから何を・なぜ学ぶか」の地図を提示してから具体に入る
 - **必要な情報を省略しない**: 読者の Java 知識はゼロのため、基本文法を含めて Java での具体は省略せず解説する。既習の概念は再入門しないが、Laravel / PHP を足がかりに Java の具体へ接続する
 - **Laravel との対比を各所に織り込む**（教材全体の背骨）
-- **ハンズオンは最終 Part（Part 5）に集約** する。Part 1 から 4 はコードを示しながら概念を体系的に解説し、実際の構築は総合ハンズオンで一気に行う
+- **ハンズオンは最終 Part（Part 5）に集約** する。Part 1 から 4 はコードを示しながら概念を体系的に解説し、実際の構築は総合ハンズオンで一気に行う。ただし Part 1〜2 には、読むだけでも本筋が完結することを前提に、希望者が手を動かせる軽量な **JShell ハンズオン（任意トラック）** を一部の Section 末尾に添える（Docker + JShell。入口は 1-1-4）。「ハンズオンは Part 5 集約」という方針自体は維持し、任意トラックはあくまで補助とする
 - 実装は **AI（Claude Code）活用を前提** とし、構文の暗記ではなく構造の理解に重きを置く
 
 | Part | テーマ | 概要 |
@@ -74,7 +74,7 @@
 | Part 4 | 実務に耐える品質をつくる | セキュリティ（認証・認可・JWT 入門）、テスト（JUnit / Mockito / MockMvc）、運用の土台（例外設計・ログ・設定の外部化・Docker パッケージング） |
 | Part 5 | 総合ハンズオン（タスク管理 REST API） | 全知識を統合し、認証付きタスク管理 REST API をゼロから設計・実装・テストする。AI（Claude Code）活用を前提とした実践 |
 
-各 Part は 2〜4 の Chapter で構成する（全 18 Chapter / 45 Section）。Part 1 から 4 の Section は原則「概念」種別、Part 5 は「ハンズオン」種別とする。
+各 Part は 2〜4 の Chapter で構成する（全 18 Chapter / 46 Section）。Part 1 から 4 の Section は原則「概念」種別、Part 5 は「ハンズオン」種別とする（例外として、Part 1 の 1-1-4 は任意ハンズオントラックの入口のみ「ハンズオン」種別）。
 
 各 Section の種類・ゴール・前提・参考資料・Laravel 対比は `OUTLINE.md` で確定済み。
 
@@ -94,6 +94,7 @@ CLAUDE.md は教材の哲学（WHO / WHY / WHAT / HOW）を定義し、`OUTLINE.
 - **テスト**: JUnit Jupiter（Spring Boot 4 同梱の版に準拠。4.0 系では JUnit 6.0.x）、Mockito、Spring Boot Test（MockMvc）
 - **セキュリティ**: Spring Security（認証・認可、JWT 入門）
 - **開発環境**: Docker / Docker Compose で JDK と MySQL を構築。IDE は IntelliJ IDEA を想定。実装は AI 支援（Claude Code）を前提とする
+- **お試し実行（Part 1〜2 の任意トラック）**: Docker + JShell（`docker run -it --rm eclipse-temurin:21 jshell`）。JDK のローカルインストールなしに Java を対話実行できる REPL で、概念 Section で学んだ文法をその場で試すために用いる（本格的な環境構築は Part 5）
 
 ## プロジェクトマップ（MAP）
 

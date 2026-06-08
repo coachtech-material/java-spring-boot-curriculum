@@ -11,6 +11,7 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
 - **Why → What → How**: 各技術はこの順で解説。Part / Chapter 冒頭で全体像（地図）を先に示す。
 - **参考資料**: 一次情報（公式ドキュメント）を優先。下記「主要参考資料」を Section ごとに紐付ける。時間で変わる情報・バージョンは /write 時に再確認する。
 - **バージョン方針（案件接続）**: Java は **17 で通用する書き方を基本**とし、21 専用機能（仮想スレッド・switch パターンマッチング・record パターン等）を使う場合は明示する（record・Optional・Stream は 17 で利用可なので通常どおり使う）。`var` など旧 LTS（8 / 11）との差分は要所で**差分コラム**を添える。Spring Boot は **4.0.x をメイン**にしつつ、現場遭遇率の高い **3.x への読み替え**（Jackson 2・設定差など）と **2.x→3.x の javax→jakarta 移行**を差分コラムで補足する。
+- **任意ハンズオントラック（Part 1〜2）**: 概念主軸を保ちつつ、希望者が手を動かせるよう、対象 Section の「✨ まとめ」直前に `## 🏃 手を動かす（任意）` 枠を添える。環境は Docker + JShell（`docker run -it --rm eclipse-temurin:21 jshell`）で、読み飛ばしても本筋の理解に支障はない。入口は **1-1-4**（起動方法・JShell の操作・最初のお試しをまとめ、各枠はここを参照する）。対象は **1-2-1 / 1-2-2 / 1-2-3 / 1-3-1 / 1-3-2 / 2-1-1 / 2-2-1 / 2-3-2 / 2-4-1 / 2-4-3** の 10 Section（＋入口 1-1-4）。お題は「概念の一番おいしい 1 点」に絞り、全お題を Docker + JShell で実機検証してから掲載する。JShell で再現できない事項（検査例外のコンパイルエラー、1 ファイル 1 クラス規約など）は概念本文に委ね、枠内で「ここは JShell では扱わない」と明示する。ハンズオン集約は Part 5 という方針自体は維持する。
 
 ### 種類の凡例
 
@@ -44,7 +45,7 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
 
 | Part | テーマ | Chapter 数 | Section 数 | 種類 |
 |---|---|---|---|---|
-| Part 1 | Java 言語の基礎 | 3 | 8 | 概念 |
+| Part 1 | Java 言語の基礎 | 3 | 9 | 概念（1-1-4 のみ任意ハンズオン） |
 | Part 2 | オブジェクト指向と現代的な Java | 4 | 9 | 概念 |
 | Part 3 | Spring Boot で REST API を作る | 5 | 13 | 概念 |
 | Part 4 | 実務に耐える品質をつくる | 3 | 6 | 概念 |
@@ -58,9 +59,9 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
 
 → ゴール: ゼロから Java を「読み書きできる」状態にする。静的型付けという発想転換を軸に、基本文法を省略せず身につける。
 
-### Chapter 1-1: オリエンテーションと Java という言語（3 Section）
+### Chapter 1-1: オリエンテーションと Java という言語（4 Section）
 
-**ゴール**: 本教材の歩き方と Java という言語の正体（静的型付け・JVM）をつかみ、Laravel の知識がどう対応するかの全体マップを得る。
+**ゴール**: 本教材の歩き方と Java という言語の正体（静的型付け・JVM）をつかみ、Laravel の知識がどう対応するかの全体マップを得る。あわせて、任意で手を動かしたい読者のために JShell の実行環境を入口（1-1-4）として用意する。
 
 - **1-1-1 なぜ Java / Spring Boot を学ぶのか**
   - 種類: 概念（教材全体・Part 1 のグループ先頭。教材全体像と Laravel 対応マップを含む）
@@ -81,6 +82,14 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
   - 参考資料: [Maven — Getting Started](https://maven.apache.org/guides/getting-started/index.html)
   - Laravel 対比: Composer / artisan・PSR オートロードと、Maven・パッケージ構成の対応。PHP のクラス（既習）を土台に「Java のコードはすべてクラスの中に書く」ことを確認する
   - 注記: スケルトンに現れる各キーワードはここでは「型紙」として提示し、本格的な解説は後続に委ねる（メソッドと `static` → 1-2-3、アクセス修飾子 `public` 等 → 2-1-2、クラス本体の定義 → 2-1-1）。Part 1 各 Section のコード例はこのスケルトンを前提に書き、未習キーワードには「今は型紙として捉えれば十分」と一言添えて前方参照する
+- **1-1-4 JShell で Java を動かす（任意ハンズオン）**
+  - 種類: ハンズオン（任意トラックの入口。Part 1〜4 で唯一のハンズオン種別）
+  - 逆リンク: 1-1-2（静的型付け）。以降 Part 1〜2 の各「🏃 手を動かす（任意）」枠の参照先
+  - ゴール: Docker + JShell（`docker run -it --rm eclipse-temurin:21 jshell`）で Java を対話実行する環境を整え、最初のコード（標準出力・型エラーの体感）を動かす。JShell の基本操作（式の評価・複数行入力・`/exit`・コードを `.jsh` に保存して `/open`）と、以降の各 Section 末尾にある任意ハンズオン枠の使い方を理解する
+  - 前提: [1-1-3]
+  - 参考資料: [JShell User's Guide](https://docs.oracle.com/en/java/javase/21/jshell/) / [dev.java — Learn](https://dev.java/learn/)
+  - Laravel 対比: `php artisan tinker` / `php -a`（対話実行）の Java 版。Sail（Docker）で開発環境を包んだ感覚で、JDK をローカルに入れずに試せる
+  - 注記: 本セクションは任意トラックの入口であり、読み飛ばしても Part 1〜2 の本筋（概念）は完結する。本格的な環境構築（JDK / IDE / Maven / MySQL）は Part 5（5-1-2）で行う。起動時の `INFO: Created user preferences directory.` は無視してよいこと、Windows の Git Bash では `winpty` が要る場合があることなど、つまずきを先回りする
 
 ### Chapter 1-2: 基本文法（3 Section）
 
@@ -92,18 +101,21 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
   - 前提: [1-1-2]
   - 参考資料: [dev.java — Learn](https://dev.java/learn/)
   - Laravel 対比: PHP の `$x = ...`（型自由）に対し、Java は型を伴う宣言。緩い型変換が起きない
+  - 任意ハンズオン: `var`・縮小キャスト `(int)3.9`・`"5" + 3` と `Integer.parseInt("5") + 3` の違い・型の合わない代入でコンパイルエラーになることを JShell で試す
 - **1-2-2 演算子と制御構文**
   - 種類: 概念
   - ゴール: 演算子・条件分岐（`if` / `switch` 式）・繰り返し（`for` / 拡張 `for` / `while`）を Java の文法で書ける
   - 前提: [1-2-1]
   - 参考資料: [dev.java — Learn](https://dev.java/learn/)
   - Laravel 対比: PHP の `foreach` と Java の拡張 `for`、`switch` の違い
+  - 任意ハンズオン: `7 / 2` と `7.0 / 2` の違い・`switch` 式で値を返す・拡張 `for` でコレクションを回すことを JShell で試す
 - **1-2-3 メソッドと配列・文字列**
   - 種類: 概念
   - ゴール: メソッド定義（シグネチャ・戻り値型・オーバーロード・`static`）、配列、`String`（不変性）を理解し使える
   - 前提: [1-2-2]
   - 参考資料: [Java SE 21 Documentation](https://docs.oracle.com/en/java/javase/21/)
   - Laravel 対比: PHP の関数（型任意・可変長）と Java のメソッド（型必須・オーバーロード）の違い
+  - 任意ハンズオン: `String` の不変性（連結しても元は変わらない）・`==` と `equals()` の違い・配列の範囲外アクセスで例外が出ることを JShell で試す
 
 ### Chapter 1-3: コレクションと例外処理（2 Section）
 
@@ -115,12 +127,14 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
   - 前提: [1-2-3]
   - 参考資料: [dev.java — Learn](https://dev.java/learn/)
   - Laravel 対比: PHP の配列は「リストも連想配列も兼ねる」。Java では `List` と `Map` に明確に分かれ、要素の型も指定する
+  - 任意ハンズオン: `List` / `Map` / `Set` を操作・型違いの `add` でコンパイルエラー・`Set` が重複を自動排除することを JShell で試す
 - **1-3-2 例外処理**
   - 種類: 概念
   - ゴール: 例外・`try` / `catch` / `finally`・検査例外と非検査例外・`throw` を理解し、エラーを型として扱える
   - 前提: [1-2-3]
   - 参考資料: [dev.java — Learn](https://dev.java/learn/)
   - Laravel 対比: PHP の例外との共通点と、Java 固有の「検査例外」という考え方
+  - 任意ハンズオン: `Integer.parseInt("abc")` を `try` / `catch` / `finally` で捕捉・`throw` で独自例外を投げることを JShell で試す（検査例外のコンパイルエラーは JShell では再現できない旨を明示する）
 
 ---
 
@@ -138,6 +152,7 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
   - 前提: [1-2-3]
   - 参考資料: [dev.java — Learn](https://dev.java/learn/)
   - Laravel 対比: PHP のクラス（既習）を土台に、型付きフィールド・コンストラクタの書き方の違いへ接続
+  - 任意ハンズオン: `Task` クラスを定義し `new` → `complete()` / `describe()` でインスタンスの状態が変化することを JShell で試す（1 ファイル 1 クラス規約は JShell では扱わない旨を明示する）
 - **2-1-2 カプセル化とアクセス修飾子**
   - 種類: 概念
   - ゴール: `private` / `protected` / `public`・getter / setter・`static` メンバーを理解し、なぜ実装を隠すのかを説明できる
@@ -156,6 +171,7 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
   - 参考資料: [dev.java — Learn](https://dev.java/learn/)
   - Laravel 対比: Eloquent モデルが `extends Model` していた意味を、継承の理解で腑に落とす
   - 注記: `equals` / `hashCode` の契約はここを正式な学習場所とする（`Set` / `Map` のキー [1-3-1] と JPA エンティティ [3-4-1] の前提になる定番のつまずき所）。深入りはせず契約と既定実装の意味に絞り、`record` による自動生成は 2-4-1 で接続する
+  - 任意ハンズオン: `equals` / `hashCode` 未実装版と実装版の `Tag` を `HashSet` に入れ、要素数の違い（重複が消えるか）を JShell で確かめる
 - **2-2-2 抽象クラス**
   - 種類: 概念
   - ゴール: `abstract` クラス / メソッドを理解し、共通の骨組みを定義して具象クラスに実装させる設計ができる
@@ -179,6 +195,7 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
   - 前提: [2-3-1]
   - 参考資料: [The IoC Container](https://docs.spring.io/spring-framework/reference/core/beans.html)
   - Laravel 対比: サービスコンテナで実装を差し替えられた仕組みの根っこ＝ポリモーフィズム
+  - 任意ハンズオン: `NotificationSender` ＋ Email / Slack の実装を定義し、同じ変数で `send()` の出力が実体に応じて変わる多態性を JShell で確かめる
 
 ### Chapter 2-4: 現代的な Java（3 Section）
 
@@ -190,6 +207,7 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
   - 前提: [2-1-2]
   - 参考資料: [dev.java — Learn](https://dev.java/learn/)
   - Laravel 対比: 値オブジェクト的な扱い・PHP enum との対応
+  - 任意ハンズオン: `record` の自動生成（中身が同じなら `equals` が `true`・`toString`）と `enum` ＋ `switch` を JShell で試す
 - **2-4-2 ジェネリクスの定義**
   - 種類: 概念
   - ゴール: 型パラメータを理解し、型安全なクラス / メソッドを定義できる。コレクションが内部でどう型を守るかを説明できる
@@ -203,6 +221,7 @@ CLAUDE.md の哲学（WHO / WHY / WHAT / HOW）を、Part > Chapter > Section �
   - 参考資料: [dev.java — Learn](https://dev.java/learn/)
   - Laravel 対比: Eloquent コレクションの `map` / `filter` と Stream の対応
   - 注記: 1 Section に Optional・関数型インターフェース・ラムダ・`Stream` の 4 トピックが乗る、Part 2 で最も密度の高い Section。分割はせず（Chapter / Section 数は据え置く）、各トピックを入門スコープに絞って深追いしない。記述順は ラムダ → 関数型インターフェース → `Stream`（宣言的なコレクション操作）→ `Optional`（null 安全の締め）を推奨。`Stream` は `map` / `filter` / `collect` 程度に留め、収集器の詳細や並列化は扱わない
+  - 任意ハンズオン: `tasks.stream().filter(...).map(...).toList()` のパイプラインと、`Optional` の `orElse` / `orElseThrow` を JShell で試す
 
 ---
 

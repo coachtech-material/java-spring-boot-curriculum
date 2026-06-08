@@ -213,4 +213,4 @@ flowchart LR
 
 ---
 
-次のセクションでは、生成されたプロジェクトを実際に動かします。アプリの起点となる `@SpringBootApplication`（`main` から `SpringApplication.run` で起動する仕組み）、jar に同梱されて別途サーバを立てずに動く組み込みサーバ、設定を与える `application.yml`、そして環境ごとに設定を切り替えるプロファイルを学び、「Spring Boot アプリに設定値をどう与えるか」を説明できるようにします。
+次のセクションでは、生成されたプロジェクトがどのように起動し、設定を受け取るのかを見ていきます。アプリの起点となる `@SpringBootApplication`（`main` から `SpringApplication.run` で起動する仕組み）、jar に同梱されて別途サーバを立てずに動く組み込みサーバ、設定を与える `application.yml`、そして環境ごとに設定を切り替えるプロファイルを学び、「Spring Boot アプリに設定値をどう与えるか」を説明できるようにします。

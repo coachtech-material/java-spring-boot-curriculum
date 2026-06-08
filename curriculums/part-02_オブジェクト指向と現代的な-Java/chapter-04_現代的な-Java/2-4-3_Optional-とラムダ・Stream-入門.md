@@ -66,7 +66,7 @@ name -> System.out.println(name) // 引数が 1 つならカッコを省略で�
 
 ## 関数型インターフェース
 
-ラムダ式はどんな型として扱われるのでしょうか。答えは **関数型インターフェース** です。これは **抽象メソッドをちょうど 1 つだけ持つインターフェース** のことで、ラムダ式はその唯一のメソッドの実装になります。`NotificationSender` は `send` 1 つだけなので、関数型インターフェースです。`@FunctionalInterface` を付けると、「これは 1 メソッドの約束だ」と明示でき、うっかり 2 つ目の抽象メソッドを足すとコンパイラが警告します。
+ラムダ式はどんな型として扱われるのでしょうか。答えは **関数型インターフェース** です。これは **抽象メソッドをちょうど 1 つだけ持つインターフェース** のことで、ラムダ式はその唯一のメソッドの実装になります。`NotificationSender` は `send` 1 つだけなので、関数型インターフェースです。`@FunctionalInterface` を付けると、「これは 1 メソッドの約束だ」と明示でき、うっかり 2 つ目の抽象メソッドを足すとコンパイルエラーになります。
 
 Java は、よく使う関数型インターフェースを `java.util.function` パッケージに標準で用意しています。代表的なものは次の 4 つです。
 
@@ -161,6 +161,55 @@ String label = found
 ⚠️ `Optional` は **メソッドの戻り値** に使うのが基本です。「見つからないことがある」検索結果などに向きます。フィールドやメソッドの引数を `Optional` 型にするのは推奨されません（かえって扱いが複雑になります）。
 
 💡 **Laravel との対応**: Eloquent の `find()` が `null` を返し、`findOrFail()` が例外を投げたのを思い出してください。`Optional` は「無いかもしれない」を型で明示し、`orElseThrow(...)` を付ければ `findOrFail()` 相当になります。「無いかもしれない結果」を、呼び出し側に型で伝えられるのが `Optional` の利点です。
+
+---
+
+## 🏃 手を動かす（任意）: Stream と Optional を試す
+
+ここは任意です（飛ばしても本筋に支障はありません）。1-1-4 の手順で JShell を起動して試します。まず、お題の `Task` クラスと一覧を用意します。次のブロックを貼り付けます。
+
+```java
+import java.util.*;
+class Task {
+    Long id; String title; boolean done;
+    Task(Long id, String title) { this.id = id; this.title = title; this.done = false; }
+    boolean isDone() { return done; }
+    Long getId() { return id; }
+    String describe() { return title + "（" + (done ? "完了" : "未完了") + "）"; }
+}
+List<Task> tasks = List.of(new Task(1L, "牛乳を買う"), new Task(2L, "ゴミ出し"));
+```
+
+`Stream` で「絞り込み → 変換 → 集約」をつなぎます。これも複数行の 1 つの式なので、ブロックごと貼り付けます。
+
+```java
+tasks.stream()
+     .filter(x -> !x.isDone())
+     .map(Task::describe)
+     .toList()
+```
+
+貼り付けると、次のように表示されます（`jshell>` を付けずに貼ったときの結果です）。
+
+```text
+$4 ==> [牛乳を買う（未完了）, ゴミ出し（未完了）]
+```
+
+次に `Optional` です。「見つからないかもしれない」検索結果を型で表します。これも 1 つの式なのでブロックで貼り付けます。
+
+```java
+tasks.stream()
+     .filter(x -> x.getId().equals(2L))
+     .findFirst()
+     .map(Task::describe)
+     .orElse("該当なし")
+```
+
+```text
+$5 ==> "ゴミ出し（未完了）"
+```
+
+`findFirst()` は `Optional` を返し、`map` で中身を変換、`orElse` で「無いとき」の既定値を指定できます。確認できたら `/exit` で終了します。
 
 ---
 

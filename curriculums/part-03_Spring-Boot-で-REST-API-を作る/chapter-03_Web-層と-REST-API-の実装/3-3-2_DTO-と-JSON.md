@@ -254,4 +254,4 @@ public TaskResponse create(TaskCreateRequest request) {
 
 ---
 
-次のセクションでは、ここで定義したリクエスト DTO に入力検証（バリデーション）を加え、エラーの設計まで踏み込みます。`jakarta.validation.constraints` の制約アノテーションによる Bean Validation、`@Valid` でリクエストを検証する仕組み、検証に失敗したときの例外、そして `@RestControllerAdvice` による統一エラーレスポンスの組み立てまでを学び、入力検証とエラー設計を一通り押さえます。
+次のセクションでは、ここで定義したリクエスト DTO への入力検証（バリデーション）と、エラーの設計まで踏み込みます。`jakarta.validation.constraints` の制約アノテーションによる Bean Validation、`@Valid` でリクエストを検証する仕組み、検証に失敗したときの例外、そして `@RestControllerAdvice` による統一エラーレスポンスの組み立てまでを学び、入力検証とエラー設計を一通り押さえます。

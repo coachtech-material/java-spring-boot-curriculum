@@ -30,7 +30,7 @@ API のリクエストやレスポンスのように「データを運ぶだけ�
 
 ### 🧠 先輩エンジニアの思考プロセス
 
-> データを運ぶだけのクラスに、私は何度 getter と `equals` と `toString` を書いたか分かりません。Laravel なら配列や stdClass でさっと済ませていた「ただの値の入れ物」を、Java では律儀にクラスにして、IDE の自動生成ボタンを連打していました。`record` を知ったときは、あの定型作業が 1 行で消えて拍子抜けしたほどです。
+> データを運ぶだけのクラスに、私は何度 getter と `equals` と `toString` を書いたか分かりません。Laravel なら配列や stdClass でさっと済ませていた「ただの値の入れ物」を、Java では律儀にクラスにして、IDE の自動生成機能を何度も呼び出していました。`record` を知ったときは、あの定型作業が 1 行で消えて拍子抜けしたほどです。
 >
 > `enum` も、現場に出てから評価が変わった機能です。ステータスを `String` の "todo" や "done" で持っていたころは、綴り間違いや想定外の値が紛れ込むバグに悩まされました。`enum` にしてからは、定義した値以外はそもそもコンパイルが通りません。「ありえない値が来ない」と型で保証できる安心感は、一度知ると手放せません。
 
@@ -101,7 +101,7 @@ public record TaskSummary(Long id, String title, boolean done) {
 
 `record` には、データを表す型に徹するための制約があります。
 
-- **不変（イミュータブル）**: コンポーネントは `final` で、setter はありません。一度作ったら値を変えられません。だから DTO や値オブジェクトのように「作って渡すだけ」のデータに向きます
+- **不変（イミュータブル）**: コンポーネントは `final` で、setter はありません。一度作ったら値を変えられません。だから DTO（Data Transfer Object、API の入出力などでデータを運ぶための型。3-3-2 で詳説）や値オブジェクトのように「作って渡すだけ」のデータに向きます
 - **暗黙に `final`**: `record` は継承できません（サブクラスを作れない）
 - **クラスは継承できないが、インターフェースは実装できる**: `record TaskSummary(...) implements Comparable<TaskSummary>` のように契約を満たせます
 - 追加のインスタンスフィールドは持てません（コンポーネント以外の状態は持たない）。一方、メソッドや `static` メンバーは追加できます
@@ -187,6 +187,42 @@ System.out.println(p.getLevel());   // 3
 💡 `enum` のコンストラクタは外部から呼べません（暗黙に `private` 相当で、定数の宣言時にだけ使われます）。`new Priority(...)` のように増やすことはできず、取りうる値は定義した 3 つに固定されます。これが「決まった値の集合」を保証する仕組みです。
 
 💡 **PHP との対応**: PHP 8.1 の `enum`（`enum Status: string { case Todo = 'todo'; }` のような backed enum）に対応します。Java の `enum` は、複数のフィールドやメソッドを持てる点でより多機能で、ちょっとしたロジックを定数ごとに持たせられます。
+
+---
+
+## 🏃 手を動かす（任意）: record と enum を試す
+
+ここは任意です（飛ばしても本筋に支障はありません）。1-1-4 の手順で JShell を起動して試します。まず `record` を定義します（1 行で、コンストラクタ・アクセサ・`equals`・`toString` が自動生成されます）。次のブロックを貼り付けます。
+
+```java
+record TaskSummary(Long id, String title, boolean done) {}
+```
+
+中身が同じ 2 つを作って比べます（`jshell>` が入力、その下が出力）。
+
+```text
+jshell> var a = new TaskSummary(1L, "牛乳を買う", false)
+a ==> TaskSummary[id=1, title=牛乳を買う, done=false]
+
+jshell> var b = new TaskSummary(1L, "牛乳を買う", false)
+b ==> TaskSummary[id=1, title=牛乳を買う, done=false]
+
+jshell> a.equals(b)
+$4 ==> true
+```
+
+`equals` が自動生成され、中身が同じなら `true` です。`a` の表示を見ると `toString` も自動です（2-2-1 で手書きしたものが `record` では自動）。次に `enum` を定義します。
+
+```java
+enum TaskStatus { TODO, DOING, DONE }
+```
+
+```text
+jshell> String label = switch (TaskStatus.TODO) { case TODO -> "未着手"; case DOING -> "進行中"; case DONE -> "完了"; }
+label ==> "未着手"
+```
+
+`enum` は決まった値だけを取る型で、`switch` 式と相性よく書けます。確認できたら `/exit` で終了します。
 
 ---
 
